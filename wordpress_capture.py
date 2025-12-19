@@ -160,6 +160,21 @@ class WordPressCapture:
         
         return self.output_dir / path
     
+    def _is_css_file(self, url: str) -> bool:
+        """
+        Check if a URL points to a CSS file.
+        
+        Args:
+            url: URL to check
+            
+        Returns:
+            True if URL appears to be a CSS file
+        """
+        parsed = urlparse(url)
+        # Get the path without query parameters or fragments
+        path = parsed.path.lower()
+        return path.endswith('.css')
+    
     def download_file(self, url: str, local_path: Optional[Path] = None) -> bool:
         """
         Download a file from the URL.
@@ -313,7 +328,7 @@ class WordPressCapture:
                 # Only download resources from the same domain
                 if urlparse(resource_url).netloc == urlparse(self.base_url).netloc:
                     # Download CSS files and process them
-                    if resource_url.endswith('.css'):
+                    if self._is_css_file(resource_url):
                         if self.download_file(resource_url):
                             css_path = self.url_to_path(resource_url)
                             self.process_css_file(css_path, resource_url)

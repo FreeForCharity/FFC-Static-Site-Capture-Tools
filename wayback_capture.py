@@ -98,6 +98,35 @@ class WaybackCapture:
             print(f"Error downloading {wayback_url}: {e}")
             return False
     
+    def _is_html_page(self, url: str) -> bool:
+        """
+        Check if a URL likely points to an HTML page.
+        
+        Args:
+            url: URL to check
+            
+        Returns:
+            True if URL appears to be an HTML page
+        """
+        parsed = urlparse(url)
+        path = parsed.path.lower()
+        
+        # Check for explicit HTML extensions
+        if path.endswith(('.html', '.htm')):
+            return True
+        
+        # Check if it's a directory-like path (ends with /)
+        # These typically serve index.html
+        if path.endswith('/'):
+            return True
+        
+        # If no extension and not ending with /, likely an HTML page
+        # (many modern sites use clean URLs without .html)
+        if '.' not in os.path.basename(path):
+            return True
+        
+        return False
+    
     def url_to_path(self, url: str) -> Path:
         """
         Convert a URL to a local file path.
@@ -216,7 +245,7 @@ class WaybackCapture:
                 # Only follow links on the same domain for deeper crawling
                 if urlparse(resource_url).netloc == urlparse(self.base_url).netloc:
                     # HTML pages can be crawled deeper
-                    if any(resource_url.endswith(ext) for ext in ['.html', '.htm', '/']):
+                    if self._is_html_page(resource_url):
                         self._capture_url(resource_url, timestamp, depth + 1, max_depth)
                     else:
                         # Download other resources without increasing depth
