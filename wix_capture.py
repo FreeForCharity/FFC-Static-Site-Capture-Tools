@@ -248,7 +248,7 @@ class WixCapture:
                 parsed = urlparse(resource_url)
                 
                 # Download CSS files and process them
-                if resource_url.endswith('.css') or 'text/css' in resource_url:
+                if resource_url.endswith('.css'):
                     if self.download_file(resource_url):
                         css_path = self.url_to_path(resource_url)
                         self.process_css_file(css_path, resource_url)

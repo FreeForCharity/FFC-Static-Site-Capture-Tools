@@ -9,12 +9,11 @@ websites by scraping pages and downloading all associated resources.
 import os
 import re
 import sys
-import json
 import time
 import requests
 from urllib.parse import urljoin, urlparse, unquote
 from pathlib import Path
-from typing import Set, List, Optional, Dict
+from typing import Set, List, Optional
 from bs4 import BeautifulSoup
 
 
@@ -89,7 +88,11 @@ class WordPressCapture:
             try:
                 response = self.session.get(sitemap_url, timeout=10)
                 if response.status_code == 200:
-                    soup = BeautifulSoup(response.content, 'lxml-xml')
+                    # Try lxml-xml parser first, fall back to xml if not available
+                    try:
+                        soup = BeautifulSoup(response.content, 'lxml-xml')
+                    except Exception:
+                        soup = BeautifulSoup(response.content, 'xml')
                     
                     # Extract URLs from sitemap
                     for loc in soup.find_all('loc'):
@@ -112,7 +115,12 @@ class WordPressCapture:
         try:
             response = self.session.get(sitemap_url, timeout=10)
             if response.status_code == 200:
-                soup = BeautifulSoup(response.content, 'lxml-xml')
+                # Try lxml-xml parser first, fall back to xml if not available
+                try:
+                    soup = BeautifulSoup(response.content, 'lxml-xml')
+                except Exception:
+                    soup = BeautifulSoup(response.content, 'xml')
+                    
                 for loc in soup.find_all('loc'):
                     url = loc.text.strip()
                     if not url.endswith('.xml'):
@@ -305,7 +313,7 @@ class WordPressCapture:
                 # Only download resources from the same domain
                 if urlparse(resource_url).netloc == urlparse(self.base_url).netloc:
                     # Download CSS files and process them
-                    if resource_url.endswith('.css') or 'text/css' in resource_url:
+                    if resource_url.endswith('.css'):
                         if self.download_file(resource_url):
                             css_path = self.url_to_path(resource_url)
                             self.process_css_file(css_path, resource_url)

@@ -14,7 +14,6 @@ import requests
 from urllib.parse import urljoin, urlparse, unquote
 from pathlib import Path
 from typing import Set, Optional
-from datetime import datetime
 
 
 class WaybackCapture:
