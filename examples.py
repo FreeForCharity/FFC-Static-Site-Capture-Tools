@@ -78,8 +78,6 @@ def example_advanced_usage():
     print("=" * 60)
     
     # You can also capture individual pages
-    from wordpress_capture import WordPressCapture
-    
     capturer = WordPressCapture(
         base_url="https://example.com",
         output_dir="./examples/custom_output"

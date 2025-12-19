@@ -11,6 +11,7 @@ import os
 import re
 import sys
 import time
+import hashlib
 import requests
 from urllib.parse import urljoin, urlparse, unquote
 from pathlib import Path
@@ -60,7 +61,9 @@ class WixCapture:
             path = path.replace('/', '_').replace('\\', '_')
             if not path:
                 path = 'index'
-            path = f"{path}_{hash(parsed.query) % 10000}"
+            # Use hashlib for consistent hashing across runs
+            query_hash = hashlib.md5(parsed.query.encode()).hexdigest()[:8]
+            path = f"{path}_{query_hash}"
         
         # Default to index.html if path is empty or ends with /
         if not path or path.endswith('/'):
