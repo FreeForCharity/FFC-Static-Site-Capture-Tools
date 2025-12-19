@@ -2,6 +2,8 @@
 
 This repository provides tools to capture static website content for charities from various sources. These tools are particularly useful when a charity has lost access to their website or needs to migrate from platforms that don't offer export functionality.
 
+**🚀 New to this project? Start with the [Quick Start Guide](QUICK_START.md)!**
+
 ## Use Cases
 
 ### 1. Wayback Machine (Internet Archive)
