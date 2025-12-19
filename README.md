@@ -4,6 +4,22 @@ This repository provides tools to capture static website content for charities f
 
 **🚀 New to this project? Start with the [Quick Start Guide](QUICK_START.md)!**
 
+**🔧 Looking for alternative tools?** See our comprehensive [Alternatives & Runtime Guide](ALTERNATIVES.md) for open-source and commercial options.
+
+## Table of Contents
+- [Use Cases](#use-cases)
+- [Features](#features)
+- [Installation](#installation)
+- [Where to Run](#where-to-run)
+- [Usage](#usage)
+- [Alternative Solutions](#alternative-solutions)
+- [Output Structure](#output-structure)
+- [How It Works](#how-it-works)
+- [Limitations](#limitations-and-considerations)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Use Cases
 
 ### 1. Wayback Machine (Internet Archive)
@@ -42,6 +58,29 @@ cd FFC-Static-Site-Capture-Tools
 ```bash
 pip install -r requirements.txt
 ```
+
+## Where to Run
+
+These Python scripts can be executed in several environments:
+
+### Local Machine (Recommended)
+- **Windows**: Command Prompt, PowerShell, or Windows Terminal
+- **macOS**: Terminal.app or iTerm2  
+- **Linux**: Any terminal emulator
+
+**Requirements:**
+- Python 3.7+ installed
+- 4GB RAM minimum (8GB+ for large sites)
+- Sufficient disk space for captured content
+- Active internet connection
+
+### Cloud & Server Options
+- **GitHub Actions**: Scheduled automated captures (free for public repos)
+- **VPS/Cloud Servers**: DigitalOcean, AWS EC2, Linode, etc.
+- **Docker Containers**: Portable execution environment
+- **Serverless**: AWS Lambda, Google Cloud Functions
+
+See [ALTERNATIVES.md](ALTERNATIVES.md) for detailed deployment guides and Docker examples.
 
 ## Usage
 
@@ -123,6 +162,28 @@ optional arguments:
                           Maximum crawl depth (default: 2)
                           For wix and wayback sources
 ```
+
+## Alternative Solutions
+
+While these tools work well for basic charity website capture, you may want to consider other solutions depending on your needs:
+
+### Open-Source Alternatives
+- **ArchiveBox**: Self-hosted archiving platform with web UI and multiple formats (highly recommended for ongoing archival)
+- **Simply Static**: WordPress plugin for direct static export (best for WordPress with admin access)  
+- **HTTrack**: Classic desktop tool for website mirroring
+- **Wget**: Command-line tool for scripted downloads
+
+### Commercial Services
+- **ScraperAPI**: Professional web scraping service ($49+/month)
+- **Apify**: Wayback Machine integration and scheduled archiving
+- **SiteBuilders.PRO**: Professional Wix migration services
+- **PageFreezer**: Compliance-grade archiving for regulated industries
+
+**📚 See [ALTERNATIVES.md](ALTERNATIVES.md) for a comprehensive comparison of 15+ tools**, including:
+- Detailed feature comparisons
+- Use case recommendations
+- Pricing information
+- When to use each solution
 
 ## Output Structure
 
