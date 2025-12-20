@@ -354,7 +354,10 @@ def main():
     max_depth = int(sys.argv[3]) if len(sys.argv) > 3 else 2
     
     capturer = WixCapture(url, output_dir)
-    capturer.capture_site(max_depth=max_depth)
+    try:
+        capturer.capture_site(max_depth=max_depth)
+    finally:
+        capturer.close()
 
 
 if __name__ == "__main__":

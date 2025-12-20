@@ -264,9 +264,17 @@ class WordPressCapture:
                     
                 # Handle srcset which can have multiple URLs and optional descriptors (e.g., "2x", "1920w")
                 if attr == 'srcset':
-                    urls = re.findall(r'(https?://[^\s,]+?)(?:\s+[\d.]+[wx])?(?=\s|,|$)', value)
-                    for u in urls:
-                        resources.add(u)
+                    # Split on commas to get individual candidates, each of form: "url [descriptor]"
+                    for candidate in value.split(','):
+                        candidate = candidate.strip()
+                        if not candidate:
+                            continue
+                        # The URL is the first token before any descriptor (e.g., "2x", "1920w")
+                        url_part = candidate.split()[0] if candidate.split() else candidate
+                        if not url_part or url_part.startswith(('data:', 'mailto:', 'javascript:', '#')):
+                            continue
+                        full_url = urljoin(base_url, url_part)
+                        resources.add(full_url)
                 elif not value.startswith(('data:', 'mailto:', 'javascript:', '#')):
                     full_url = urljoin(base_url, value)
                     resources.add(full_url)
@@ -405,7 +413,10 @@ def main():
     output_dir = sys.argv[2] if len(sys.argv) > 2 else "wordpress_capture"
     
     capturer = WordPressCapture(url, output_dir)
-    capturer.capture_site()
+    try:
+        capturer.capture_site()
+    finally:
+        capturer.close()
 
 
 if __name__ == "__main__":

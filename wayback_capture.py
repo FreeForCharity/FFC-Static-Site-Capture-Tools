@@ -82,6 +82,7 @@ class WaybackCapture:
         api_url = f"https://archive.org/wayback/available?url={url}"
         try:
             response = self.session.get(api_url, timeout=10)
+            response.raise_for_status()
             data = response.json()
             if data.get('archived_snapshots', {}).get('closest', {}).get('available'):
                 timestamp = data['archived_snapshots']['closest']['timestamp']
@@ -288,7 +289,10 @@ def main():
     output_dir = sys.argv[3] if len(sys.argv) > 3 else "wayback_capture"
     
     capturer = WaybackCapture(url, output_dir)
-    capturer.capture_site(timestamp=timestamp)
+    try:
+        capturer.capture_site(timestamp=timestamp)
+    finally:
+        capturer.close()
 
 
 if __name__ == "__main__":

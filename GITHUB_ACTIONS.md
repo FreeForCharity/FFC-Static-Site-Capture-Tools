@@ -590,7 +590,9 @@ jobs:
         id: capture
         run: |
           timestamp=$(date +%Y%m%d)
-          output="backups/${timestamp}_$(echo ${{ matrix.site.url }} | sed 's/[^a-zA-Z0-9]/_/g')"
+          # Create a unique identifier from the URL for use in tags
+          site_id=$(echo ${{ matrix.site.url }} | sed 's/[^a-zA-Z0-9]/_/g' | cut -c1-30)
+          output="backups/${timestamp}_${site_id}"
           
           python3 ffc_capture.py ${{ matrix.site.source }} ${{ matrix.site.url }} -o "${output}" 2>&1 | tee log.txt
           
@@ -605,12 +607,13 @@ jobs:
           echo "total_size=${total_size}" >> $GITHUB_OUTPUT
           echo "archive=${output}.tar.gz" >> $GITHUB_OUTPUT
           echo "timestamp=${timestamp}" >> $GITHUB_OUTPUT
+          echo "site_id=${site_id}" >> $GITHUB_OUTPUT
       
       - name: Upload to releases
         uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191  # v2.0.8
         with:
-          tag_name: backup-${{ steps.capture.outputs.timestamp }}
-          name: Weekly Backup ${{ steps.capture.outputs.timestamp }}
+          tag_name: backup-${{ steps.capture.outputs.timestamp }}-${{ steps.capture.outputs.site_id }}
+          name: Weekly Backup ${{ steps.capture.outputs.timestamp }} - ${{ matrix.site.url }}
           files: ${{ steps.capture.outputs.archive }}
           body: |
             Automated weekly backup of charity websites.
@@ -625,11 +628,12 @@ jobs:
           script: |
             const date = new Date().toISOString().split('T')[0];
             const timestamp = '${{ steps.capture.outputs.timestamp }}';
+            const siteId = '${{ steps.capture.outputs.site_id }}';
             
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Weekly Backup Report - ${date}`,
+              title: `Weekly Backup Report - ${date} - ${{ matrix.site.url }}`,
               body: `## Automated Backup Completed
               
               **Site:** ${{ matrix.site.url }}
@@ -641,7 +645,7 @@ jobs:
               - Size: ${{ steps.capture.outputs.total_size }}
               
               ### Download
-              The backup is available in [Releases](../../releases/tag/backup-${timestamp})
+              The backup is available in [Releases](../../releases/tag/backup-${timestamp}-${siteId})
               
               ### Next Backup
               Scheduled for: ${new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0]}`,

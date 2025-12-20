@@ -76,6 +76,7 @@ Examples:
     print("FFC Static Site Capture Tool")
     print("=" * 60)
     
+    capturer = None
     try:
         if args.source == 'wayback':
             capturer = WaybackCapture(args.url, args.output)
@@ -99,6 +100,9 @@ Examples:
     except Exception as e:
         print(f"\n\nERROR: {e}")
         sys.exit(1)
+    finally:
+        if capturer is not None:
+            capturer.close()
 
 
 if __name__ == "__main__":

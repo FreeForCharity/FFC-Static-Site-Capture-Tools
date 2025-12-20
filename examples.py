@@ -6,10 +6,6 @@ This script shows how to use the FFC Static Site Capture Tools
 programmatically in your own Python code.
 """
 
-from wayback_capture import WaybackCapture
-from wix_capture import WixCapture
-from wordpress_capture import WordPressCapture
-
 
 def example_wayback_capture():
     """Example: Capture a site from Wayback Machine."""
