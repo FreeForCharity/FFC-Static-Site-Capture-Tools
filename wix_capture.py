@@ -15,7 +15,7 @@ import hashlib
 import requests
 from urllib.parse import urljoin, urlparse, unquote
 from pathlib import Path
-from typing import Set, List, Optional
+from typing import Set, Optional
 from bs4 import BeautifulSoup
 
 
@@ -37,6 +37,24 @@ class WixCapture:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         })
+    
+    def close(self) -> None:
+        """Close the underlying HTTP session and release resources."""
+        if hasattr(self, 'session') and self.session is not None:
+            self.session.close()
+            self.session = None
+    
+    def __enter__(self) -> "WixCapture":
+        """Enter the runtime context related to this object."""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit the runtime context and close the HTTP session."""
+        self.close()
+    
+    def __del__(self) -> None:
+        """Ensure the HTTP session is closed when the object is garbage collected."""
+        self.close()
         
     def url_to_path(self, url: str) -> Path:
         """
@@ -164,7 +182,11 @@ class WixCapture:
         Returns:
             Set of resource URLs
         """
-        soup = BeautifulSoup(html_content, 'lxml')
+        try:
+            soup = BeautifulSoup(html_content, 'lxml')
+        except Exception:
+            # Fallback to built-in parser if lxml is unavailable or fails
+            soup = BeautifulSoup(html_content, 'html.parser')
         resources = set()
         
         # Extract from various tags
@@ -263,8 +285,6 @@ class WixCapture:
             resources = self.extract_resources_from_html(html_content, url)
             
             for resource_url in resources:
-                parsed = urlparse(resource_url)
-                
                 # Download CSS files and process them
                 if self._is_css_file(resource_url):
                     if self.download_file(resource_url):
@@ -278,7 +298,11 @@ class WixCapture:
                 time.sleep(0.1)
             
             # Extract and follow internal links (only on same domain)
-            soup = BeautifulSoup(html_content, 'lxml')
+            try:
+                soup = BeautifulSoup(html_content, 'lxml')
+            except Exception:
+                # Fallback to built-in parser if lxml is unavailable or fails
+                soup = BeautifulSoup(html_content, 'html.parser')
             for link in soup.find_all('a', href=True):
                 href = link['href']
                 if not href.startswith(('#', 'mailto:', 'javascript:', 'tel:')):

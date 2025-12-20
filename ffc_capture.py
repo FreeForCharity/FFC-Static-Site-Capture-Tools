@@ -8,7 +8,6 @@ sources including Wayback Machine, Wix sites, and WordPress sites.
 
 import sys
 import argparse
-from pathlib import Path
 
 # Import capture modules
 from wayback_capture import WaybackCapture

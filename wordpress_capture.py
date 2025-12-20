@@ -36,6 +36,24 @@ class WordPressCapture:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         })
+    
+    def close(self) -> None:
+        """Close the underlying HTTP session and release resources."""
+        if hasattr(self, 'session') and self.session is not None:
+            self.session.close()
+            self.session = None
+    
+    def __enter__(self) -> "WordPressCapture":
+        """Enter the runtime context related to this object."""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit the runtime context and close the HTTP session."""
+        self.close()
+    
+    def __del__(self) -> None:
+        """Ensure the HTTP session is closed when the object is garbage collected."""
+        self.close()
         
     def discover_pages_via_api(self) -> List[str]:
         """
@@ -219,7 +237,11 @@ class WordPressCapture:
         Returns:
             Set of resource URLs
         """
-        soup = BeautifulSoup(html_content, 'lxml')
+        try:
+            soup = BeautifulSoup(html_content, 'lxml')
+        except Exception:
+            # Fallback to built-in parser if lxml is unavailable or fails
+            soup = BeautifulSoup(html_content, 'html.parser')
         resources = set()
         
         # Extract from various tags
@@ -240,9 +262,9 @@ class WordPressCapture:
                 if not value:
                     continue
                     
-                # Handle srcset which can have multiple URLs
+                # Handle srcset which can have multiple URLs and optional descriptors (e.g., "2x", "1920w")
                 if attr == 'srcset':
-                    urls = re.findall(r'(https?://[^\s,]+)', value)
+                    urls = re.findall(r'(https?://[^\s,]+?)(?:\s+[\d.]+[wx])?(?=\s|,|$)', value)
                     for u in urls:
                         resources.add(u)
                 elif not value.startswith(('data:', 'mailto:', 'javascript:', '#')):

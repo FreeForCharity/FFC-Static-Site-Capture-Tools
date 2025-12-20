@@ -34,6 +34,24 @@ class WaybackCapture:
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (compatible; FFC-Static-Capture/1.0)'
         })
+    
+    def close(self) -> None:
+        """Close the underlying HTTP session and release resources."""
+        if hasattr(self, 'session') and self.session is not None:
+            self.session.close()
+            self.session = None
+    
+    def __enter__(self) -> "WaybackCapture":
+        """Enter the runtime context related to this object."""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Exit the runtime context and close the HTTP session."""
+        self.close()
+    
+    def __del__(self) -> None:
+        """Ensure the HTTP session is closed when the object is garbage collected."""
+        self.close()
         
     def get_wayback_url(self, url: str, timestamp: Optional[str] = None) -> str:
         """
