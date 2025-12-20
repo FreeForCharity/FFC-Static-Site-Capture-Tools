@@ -50,8 +50,11 @@ jobs:
           pip install -r requirements.txt
       
       - name: Run capture
+        env:
+          FFC_SOURCE: ${{ inputs.source }}
+          FFC_URL: ${{ inputs.url }}
         run: |
-          python3 ffc_capture.py ${{ inputs.source }} ${{ inputs.url }} -o ./captured_site
+          python3 ffc_capture.py "$FFC_SOURCE" "$FFC_URL" -o ./captured_site
       
       - name: Upload captured site as artifact
         uses: actions/upload-artifact@v4
@@ -159,9 +162,13 @@ jobs:
       
       - name: Run capture and capture output
         id: capture
+        env:
+          FFC_SOURCE: ${{ inputs.source }}
+          FFC_URL: ${{ inputs.url }}
         run: |
           # Run capture and save output
-          python3 ffc_capture.py ${{ inputs.source }} ${{ inputs.url }} -o ./captured_site 2>&1 | tee capture_log.txt
+          # Use environment variables so inputs are passed as single, safely-quoted arguments
+          python3 ffc_capture.py "$FFC_SOURCE" "$FFC_URL" -o ./captured_site 2>&1 | tee capture_log.txt
           
           # Extract statistics
           file_count=$(find ./captured_site -type f | wc -l)
@@ -276,6 +283,9 @@ jobs:
       
       - name: Run capture
         id: capture
+        env:
+          FFC_SOURCE: ${{ inputs.source }}
+          FFC_URL: ${{ inputs.url }}
         run: |
           # Create captures directory if it doesn't exist
           mkdir -p captures
@@ -284,7 +294,7 @@ jobs:
           timestamp=$(date +%Y%m%d_%H%M%S)
           output_dir="captures/capture_${timestamp}"
           
-          python3 ffc_capture.py ${{ inputs.source }} ${{ inputs.url }} -o "${output_dir}" 2>&1 | tee capture_log.txt
+          python3 ffc_capture.py "$FFC_SOURCE" "$FFC_URL" -o "${output_dir}" 2>&1 | tee capture_log.txt
           
           # Get statistics
           file_count=$(find "${output_dir}" -type f | wc -l)
@@ -427,8 +437,10 @@ jobs:
         run: pip install -r requirements.txt
       
       - name: Run capture
+        env:
+          URL: ${{ inputs.url }}
         run: |
-          python3 ffc_capture.py wayback ${{ inputs.url }} -o ./output 2>&1 | tee log.txt
+          python3 ffc_capture.py wayback "$URL" -o ./output 2>&1 | tee log.txt
           
           file_count=$(find ./output -type f | wc -l)
           echo "FILE_COUNT=${file_count}" >> $GITHUB_ENV
@@ -503,8 +515,10 @@ jobs:
       
       - name: Run capture
         id: capture
+        env:
+          URL: ${{ inputs.url }}
         run: |
-          python3 ffc_capture.py wayback ${{ inputs.url }} -o ./output 2>&1 | tee log.txt
+          python3 ffc_capture.py wayback "$URL" -o ./output 2>&1 | tee log.txt
           
           # Check if capture succeeded
           if [ $? -eq 0 ]; then

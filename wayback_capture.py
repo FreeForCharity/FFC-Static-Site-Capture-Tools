@@ -288,11 +288,8 @@ def main():
     timestamp = sys.argv[2] if len(sys.argv) > 2 else None
     output_dir = sys.argv[3] if len(sys.argv) > 3 else "wayback_capture"
     
-    capturer = WaybackCapture(url, output_dir)
-    try:
+    with WaybackCapture(url, output_dir) as capturer:
         capturer.capture_site(timestamp=timestamp)
-    finally:
-        capturer.close()
 
 
 if __name__ == "__main__":

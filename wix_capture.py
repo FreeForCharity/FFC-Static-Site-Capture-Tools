@@ -206,6 +206,22 @@ class WixCapture:
                     full_url = urljoin(base_url, url)
                     resources.add(full_url)
         
+        # Extract from srcset attributes (responsive images/sources)
+        for element in soup.find_all(['img', 'source']):
+            srcset = element.get('srcset')
+            if srcset:
+                # Split on commas to get individual candidates, each of form: "url [descriptor]"
+                for candidate in srcset.split(','):
+                    candidate = candidate.strip()
+                    if not candidate:
+                        continue
+                    # The URL is the first token before any descriptor (e.g., "2x", "1920w")
+                    url_part = candidate.split()[0] if candidate.split() else candidate
+                    if not url_part or url_part.startswith(('data:', 'mailto:', 'javascript:', '#')):
+                        continue
+                    full_url = urljoin(base_url, url_part)
+                    resources.add(full_url)
+        
         # Extract URLs from inline CSS
         for style_tag in soup.find_all('style'):
             if style_tag.string:
@@ -353,11 +369,8 @@ def main():
     output_dir = sys.argv[2] if len(sys.argv) > 2 else "wix_capture"
     max_depth = int(sys.argv[3]) if len(sys.argv) > 3 else 2
     
-    capturer = WixCapture(url, output_dir)
-    try:
+    with WixCapture(url, output_dir) as capturer:
         capturer.capture_site(max_depth=max_depth)
-    finally:
-        capturer.close()
 
 
 if __name__ == "__main__":

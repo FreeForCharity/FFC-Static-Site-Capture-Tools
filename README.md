@@ -197,7 +197,10 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
-      - run: python3 ffc_capture.py wayback ${{ inputs.url }} -o ./output
+      - name: Run capture
+        env:
+          URL: ${{ inputs.url }}
+        run: python3 ffc_capture.py wayback "$URL" -o ./output
       - uses: actions/upload-artifact@v4
         with:
           name: captured-site

@@ -412,11 +412,8 @@ def main():
     url = sys.argv[1]
     output_dir = sys.argv[2] if len(sys.argv) > 2 else "wordpress_capture"
     
-    capturer = WordPressCapture(url, output_dir)
-    try:
+    with WordPressCapture(url, output_dir) as capturer:
         capturer.capture_site()
-    finally:
-        capturer.close()
 
 
 if __name__ == "__main__":

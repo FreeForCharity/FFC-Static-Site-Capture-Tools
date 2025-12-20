@@ -72,6 +72,16 @@ Examples:
     if args.output is None:
         args.output = f"{args.source}_capture"
     
+    # Validate arguments for the chosen source
+    if args.source == 'wordpress':
+        if args.timestamp is not None:
+            print("WARNING: --timestamp argument is not applicable to wordpress source and will be ignored")
+        if args.max_depth != 2:  # 2 is the default
+            print("WARNING: --max-depth argument is not applicable to wordpress source and will be ignored")
+    elif args.source == 'wix':
+        if args.timestamp is not None:
+            print("WARNING: --timestamp argument is not applicable to wix source and will be ignored")
+    
     print("=" * 60)
     print("FFC Static Site Capture Tool")
     print("=" * 60)
