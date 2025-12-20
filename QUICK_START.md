@@ -96,8 +96,20 @@ output_directory/
 ## Next Steps
 
 - Read the full [README.md](README.md) for more features
+- Automate captures with [GitHub Actions](GITHUB_ACTIONS.md)
+- Check [ALTERNATIVES.md](ALTERNATIVES.md) for other tools
 - Check [examples.py](examples.py) for programmatic usage
 - See [CONTRIBUTING.md](CONTRIBUTING.md) to contribute improvements
+
+## Automation with GitHub Actions
+
+Want to automate your captures? GitHub Actions can:
+- Run scheduled backups (daily, weekly, monthly)
+- Create Issues with capture reports
+- Create Pull Requests with captured content
+- No server needed - runs in the cloud for free!
+
+**See [GITHUB_ACTIONS.md](GITHUB_ACTIONS.md)** for complete setup guides and examples.
 
 ---
 

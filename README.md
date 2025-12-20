@@ -6,12 +6,15 @@ This repository provides tools to capture static website content for charities f
 
 **🔧 Looking for alternative tools?** See our comprehensive [Alternatives & Runtime Guide](ALTERNATIVES.md) for open-source and commercial options.
 
+**⚡ Want to automate with GitHub Actions?** Check out the [GitHub Actions Integration Guide](GITHUB_ACTIONS.md) for automated captures, scheduled backups, and feeding results into Issues/PRs.
+
 ## Table of Contents
 - [Use Cases](#use-cases)
 - [Features](#features)
 - [Installation](#installation)
 - [Where to Run](#where-to-run)
 - [Usage](#usage)
+- [GitHub Actions Automation](#github-actions-automation)
 - [Alternative Solutions](#alternative-solutions)
 - [Output Structure](#output-structure)
 - [How It Works](#how-it-works)
@@ -162,6 +165,52 @@ optional arguments:
                           Maximum crawl depth (default: 2)
                           For wix and wayback sources
 ```
+
+## GitHub Actions Automation
+
+Automate website captures using GitHub Actions! Perfect for:
+- **Scheduled backups** of charity websites
+- **Automated archiving** on a regular schedule  
+- **Creating issues** with capture reports
+- **Creating pull requests** with captured content
+
+### Quick Start
+
+Create `.github/workflows/capture.yml`:
+
+```yaml
+name: Capture Website
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Website URL'
+        required: true
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: python3 ffc_capture.py wayback ${{ inputs.url }} -o ./output
+      - uses: actions/upload-artifact@v4
+        with:
+          name: captured-site
+          path: ./output
+```
+
+**📖 Full Documentation:** See [GITHUB_ACTIONS.md](GITHUB_ACTIONS.md) for complete examples including:
+- Scheduled captures (cron jobs)
+- Creating GitHub Issues with capture results
+- Creating Pull Requests with captured content
+- Updating existing Issues/PRs with status
+- Matrix builds for multiple sites
+- Weekly backup workflows with release publishing
 
 ## Alternative Solutions
 

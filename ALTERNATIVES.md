@@ -41,6 +41,11 @@ python3 ffc_capture.py wayback https://example.org -o ./output
 - Store results in repository or cloud storage
 - No local machine required
 - Free for public repositories
+- **See [GITHUB_ACTIONS.md](GITHUB_ACTIONS.md) for complete automation guide** including:
+  - Scheduled captures
+  - Creating Issues/PRs with results
+  - Weekly backup workflows
+  - Matrix builds for multiple sites
 
 **AWS Lambda / Google Cloud Functions:**
 - Serverless execution for periodic captures
