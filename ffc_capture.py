@@ -86,19 +86,18 @@ Examples:
     print("FFC Static Site Capture Tool")
     print("=" * 60)
     
-    capturer = None
     try:
         if args.source == 'wayback':
-            capturer = WaybackCapture(args.url, args.output)
-            capturer.capture_site(timestamp=args.timestamp, max_depth=args.max_depth)
+            with WaybackCapture(args.url, args.output) as capturer:
+                capturer.capture_site(timestamp=args.timestamp, max_depth=args.max_depth)
             
         elif args.source == 'wix':
-            capturer = WixCapture(args.url, args.output)
-            capturer.capture_site(max_depth=args.max_depth)
+            with WixCapture(args.url, args.output) as capturer:
+                capturer.capture_site(max_depth=args.max_depth)
             
         elif args.source == 'wordpress':
-            capturer = WordPressCapture(args.url, args.output)
-            capturer.capture_site()
+            with WordPressCapture(args.url, args.output) as capturer:
+                capturer.capture_site()
         
         print("\n" + "=" * 60)
         print("SUCCESS! Site capture completed successfully.")
@@ -110,9 +109,6 @@ Examples:
     except Exception as e:
         print(f"\n\nERROR: {e}")
         sys.exit(1)
-    finally:
-        if capturer is not None:
-            capturer.close()
 
 
 if __name__ == "__main__":

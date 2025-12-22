@@ -13,19 +13,19 @@ def example_wayback_capture():
     print("Example 1: Wayback Machine Capture")
     print("=" * 60)
     
-    # Initialize the capturer (example only - not executed)
-    # capturer = WaybackCapture(
+    # Use context manager for automatic resource cleanup (example only - not executed)
+    # with WaybackCapture(
     #     base_url="https://example.org",
     #     output_dir="./examples/wayback_output"
-    # )
-    
-    # Capture the site (will use the latest available snapshot)
-    # capturer.capture_site(max_depth=2)
-    
-    # Or capture from a specific timestamp
-    # capturer.capture_site(timestamp="20200101000000", max_depth=2)
+    # ) as capturer:
+    #     # Capture the site (will use the latest available snapshot)
+    #     capturer.capture_site(max_depth=2)
+    #     
+    #     # Or capture from a specific timestamp
+    #     # capturer.capture_site(timestamp="20200101000000", max_depth=2)
     
     print("\nWayback capture example shown above (commented out to avoid actual download)")
+    print("Use 'with' statement for automatic resource cleanup")
     print("Uncomment the code to run")
 
 
@@ -35,16 +35,16 @@ def example_wix_capture():
     print("Example 2: Wix Site Capture")
     print("=" * 60)
     
-    # Initialize the capturer (example only - not executed)
-    # capturer = WixCapture(
+    # Use context manager for automatic resource cleanup (example only - not executed)
+    # with WixCapture(
     #     base_url="https://example.wixsite.com/mysite",
     #     output_dir="./examples/wix_output"
-    # )
-    
-    # Capture the site with a maximum depth of 2
-    # capturer.capture_site(max_depth=2)
+    # ) as capturer:
+    #     # Capture the site with a maximum depth of 2
+    #     capturer.capture_site(max_depth=2)
     
     print("\nWix capture example shown above (commented out to avoid actual download)")
+    print("Use 'with' statement for automatic resource cleanup")
     print("Uncomment the code to run")
 
 
@@ -54,16 +54,16 @@ def example_wordpress_capture():
     print("Example 3: WordPress Site Capture")
     print("=" * 60)
     
-    # Initialize the capturer (example only - not executed)
-    # capturer = WordPressCapture(
+    # Use context manager for automatic resource cleanup (example only - not executed)
+    # with WordPressCapture(
     #     base_url="https://example.com",
     #     output_dir="./examples/wordpress_output"
-    # )
-    
-    # Capture the site (will auto-discover pages via API and sitemap)
-    # capturer.capture_site()
+    # ) as capturer:
+    #     # Capture the site (will auto-discover pages via API and sitemap)
+    #     capturer.capture_site()
     
     print("\nWordPress capture example shown above (commented out to avoid actual download)")
+    print("Use 'with' statement for automatic resource cleanup")
     print("Uncomment the code to run")
 
 
@@ -74,16 +74,16 @@ def example_advanced_usage():
     print("=" * 60)
     
     # You can also capture individual pages (example only - not executed)
-    # capturer = WordPressCapture(
+    # with WordPressCapture(
     #     base_url="https://example.com",
     #     output_dir="./examples/custom_output"
-    # )
-    
-    # Capture specific pages
-    # capturer.capture_page("https://example.com/about")
-    # capturer.capture_page("https://example.com/contact")
+    # ) as capturer:
+    #     # Capture specific pages
+    #     capturer.capture_page("https://example.com/about")
+    #     capturer.capture_page("https://example.com/contact")
     
     print("\nAdvanced capture example shown above (commented out to avoid actual download)")
+    print("Use 'with' statement for automatic resource cleanup")
     print("You can capture individual pages or customize the crawling behavior")
 
 

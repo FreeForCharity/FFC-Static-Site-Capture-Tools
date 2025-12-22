@@ -683,8 +683,9 @@ If your captures need authentication:
 - name: Run capture with auth
   env:
     API_KEY: ${{ secrets.WAYBACK_API_KEY }}
+    URL: ${{ inputs.url }}
   run: |
-    python3 ffc_capture.py wayback ${{ inputs.url }} -o ./output
+    python3 ffc_capture.py wayback "$URL" -o ./output
 ```
 
 ---

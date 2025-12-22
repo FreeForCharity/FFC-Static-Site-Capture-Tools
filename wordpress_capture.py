@@ -176,7 +176,17 @@ class WordPressCapture:
             elif '.' not in os.path.basename(path):
                 path = os.path.join(path, 'index.html')
         
-        return self.output_dir / path
+        # Prevent path traversal: resolve and ensure target stays within output_dir
+        base_dir = self.output_dir.resolve()
+        candidate_path = (base_dir / path).resolve()
+        
+        # Ensure the resolved path is within the output directory
+        try:
+            candidate_path.relative_to(base_dir)
+        except ValueError:
+            raise ValueError(f"Unsafe path traversal detected for URL: {url}")
+        
+        return candidate_path
     
     def _is_css_file(self, url: str) -> bool:
         """

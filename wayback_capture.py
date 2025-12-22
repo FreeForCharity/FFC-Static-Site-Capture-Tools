@@ -171,7 +171,18 @@ class WaybackCapture:
         if '.' not in os.path.basename(path):
             path += '.html'
         
-        return self.output_dir / path
+        # Prevent path traversal: resolve and ensure target stays within output_dir
+        base_dir = self.output_dir.resolve()
+        target_path = (base_dir / path).resolve()
+        
+        try:
+            target_path.relative_to(base_dir)
+        except ValueError:
+            # If the resolved path escapes the output directory, fall back to a safe file name
+            safe_name = os.path.basename(path) or 'index.html'
+            target_path = base_dir / safe_name
+        
+        return target_path
     
     def capture_site(self, timestamp: Optional[str] = None, max_depth: int = 3) -> None:
         """
@@ -240,24 +251,39 @@ class WaybackCapture:
             with open(html_path, 'r', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
             
-            # Find all resource URLs (links, scripts, images, stylesheets)
+            # Find all resource URLs (links, scripts, images, stylesheets, srcset)
             patterns = [
-                r'href=["\']([^"\']+)["\']',
-                r'src=["\']([^"\']+)["\']',
-                r'url\(["\']?([^"\'()]+)["\']?\)',
+                (r'href=["\']([^"\']+)["\']', False),
+                (r'src=["\']([^"\']+)["\']', False),
+                (r'url\(["\']?([^"\'()]+)["\']?\)', False),
+                (r'srcset=["\']([^"\']+)["\']', True),
             ]
             
             urls_to_download = set()
-            for pattern in patterns:
+            for pattern, is_srcset in patterns:
                 matches = re.findall(pattern, content)
                 for match in matches:
-                    if match.startswith(('http://', 'https://', '//')):
-                        if match.startswith('//'):
-                            match = 'https:' + match
-                        urls_to_download.add(match)
-                    elif not match.startswith(('data:', 'mailto:', 'javascript:', '#')):
-                        full_url = urljoin(base_url, match)
-                        urls_to_download.add(full_url)
+                    # For srcset attributes, split comma-separated candidates
+                    if is_srcset:
+                        candidates = []
+                        for part in match.split(','):
+                            part = part.strip()
+                            if not part:
+                                continue
+                            # Each part is typically "url [descriptor]", so take the first token
+                            url_part = part.split()[0] if part.split() else part
+                            candidates.append(url_part)
+                    else:
+                        candidates = [match]
+                    
+                    for candidate in candidates:
+                        if candidate.startswith(('http://', 'https://', '//')):
+                            if candidate.startswith('//'):
+                                candidate = 'https:' + candidate
+                            urls_to_download.add(candidate)
+                        elif not candidate.startswith(('data:', 'mailto:', 'javascript:', '#')):
+                            full_url = urljoin(base_url, candidate)
+                            urls_to_download.add(full_url)
             
             # Download resources
             for resource_url in urls_to_download:

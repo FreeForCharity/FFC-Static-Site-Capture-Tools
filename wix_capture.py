@@ -91,7 +91,16 @@ class WixCapture:
         if '.' not in os.path.basename(path):
             path += '.html'
         
-        return self.output_dir / path
+        # Prevent path traversal: resolve and ensure target stays within output_dir
+        base_dir = self.output_dir.resolve()
+        candidate = (base_dir / path).resolve()
+        
+        try:
+            candidate.relative_to(base_dir)
+        except ValueError:
+            raise ValueError(f"Refusing to create path outside output directory: {candidate}")
+        
+        return candidate
     
     def _is_css_file(self, url: str) -> bool:
         """
@@ -171,7 +180,7 @@ class WixCapture:
                 return ext
         return None
     
-    def extract_resources_from_html(self, html_content: str, base_url: str) -> Set[str]:
+    def extract_resources_from_html(self, html_content: str, base_url: str):
         """
         Extract all resource URLs from HTML content.
         
@@ -180,7 +189,7 @@ class WixCapture:
             base_url: Base URL for resolving relative URLs
             
         Returns:
-            Set of resource URLs
+            Tuple of (set of resource URLs, BeautifulSoup object)
         """
         try:
             soup = BeautifulSoup(html_content, 'lxml')
@@ -233,7 +242,7 @@ class WixCapture:
             css_urls = self._extract_urls_from_css(element['style'], base_url)
             resources.update(css_urls)
         
-        return resources
+        return resources, soup
     
     def _extract_urls_from_css(self, css_content: str, base_url: str) -> Set[str]:
         """Extract URLs from CSS content."""
@@ -297,8 +306,8 @@ class WixCapture:
             self.downloaded_urls.add(url)
             print(f"Saved HTML: {local_path}")
             
-            # Extract and download resources
-            resources = self.extract_resources_from_html(html_content, url)
+            # Extract and download resources (reuse soup object for efficiency)
+            resources, soup = self.extract_resources_from_html(html_content, url)
             
             for resource_url in resources:
                 # Download CSS files and process them
@@ -313,12 +322,7 @@ class WixCapture:
                 # Add small delay to be respectful
                 time.sleep(0.1)
             
-            # Extract and follow internal links (only on same domain)
-            try:
-                soup = BeautifulSoup(html_content, 'lxml')
-            except Exception:
-                # Fallback to built-in parser if lxml is unavailable or fails
-                soup = BeautifulSoup(html_content, 'html.parser')
+            # Extract and follow internal links (reuse soup object from resource extraction)
             for link in soup.find_all('a', href=True):
                 href = link['href']
                 if not href.startswith(('#', 'mailto:', 'javascript:', 'tel:')):
