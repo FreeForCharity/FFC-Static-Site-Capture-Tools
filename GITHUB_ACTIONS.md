@@ -338,13 +338,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add captures/
-          cat << 'COMMIT_MSG' > commit_message.txt
+          cat << 'COMMIT_MSG_TEMPLATE' > commit_message_template.txt
           Add captured site from ${COMMIT_URL}
           
           Source: ${COMMIT_SOURCE}
           Files: ${COMMIT_FILE_COUNT}
           Size: ${COMMIT_SIZE}
-          COMMIT_MSG
+          COMMIT_MSG_TEMPLATE
+          
+          envsubst '${COMMIT_URL} ${COMMIT_SOURCE} ${COMMIT_FILE_COUNT} ${COMMIT_SIZE}' < commit_message_template.txt > commit_message.txt
           
           git commit -F commit_message.txt
       
