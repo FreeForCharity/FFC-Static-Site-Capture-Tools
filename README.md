@@ -131,8 +131,8 @@ python wix_capture.py https://example.wixsite.com/mysite
 # Specify output directory
 python wix_capture.py https://example.wixsite.com/mysite ./my_output
 
-# Set maximum crawl depth (default is 2)
-python wix_capture.py https://example.wixsite.com/mysite ./my_output 3
+# Set maximum crawl depth (default is 3)
+python wix_capture.py https://example.wixsite.com/mysite ./my_output 5
 ```
 
 #### WordPress Capture
@@ -162,7 +162,7 @@ optional arguments:
                           Wayback Machine timestamp (YYYYMMDDHHMMSS)
                           Only for wayback source
   -d MAX_DEPTH, --max-depth MAX_DEPTH
-                          Maximum crawl depth (default: 2)
+                          Maximum crawl depth (default: 3)
                           For wix and wayback sources
 ```
 

@@ -329,15 +329,24 @@ jobs:
           EOF
       
       - name: Commit changes
+        env:
+          COMMIT_URL: ${{ inputs.url }}
+          COMMIT_SOURCE: ${{ inputs.source }}
+          COMMIT_FILE_COUNT: ${{ steps.capture.outputs.file_count }}
+          COMMIT_SIZE: ${{ steps.capture.outputs.total_size }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add captures/
-          git commit -m "Add captured site from ${{ inputs.url }}
+          cat << 'COMMIT_MSG' > commit_message.txt
+          Add captured site from ${COMMIT_URL}
           
-          Source: ${{ inputs.source }}
-          Files: ${{ steps.capture.outputs.file_count }}
-          Size: ${{ steps.capture.outputs.total_size }}"
+          Source: ${COMMIT_SOURCE}
+          Files: ${COMMIT_FILE_COUNT}
+          Size: ${COMMIT_SIZE}
+          COMMIT_MSG
+          
+          git commit -F commit_message.txt
       
       - name: Push changes
         run: |

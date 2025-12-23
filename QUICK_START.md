@@ -67,7 +67,7 @@ output_directory/
 ## Common Options
 
 - `-o` or `--output`: Specify output directory (default: `<source>_capture`)
-- `-d` or `--max-depth`: Set crawl depth for Wayback/Wix (default: 2)
+- `-d` or `--max-depth`: Set crawl depth for Wayback/Wix (default: 3)
 - `-t` or `--timestamp`: Wayback Machine timestamp (YYYYMMDDHHMMSS format)
 
 ## Tips

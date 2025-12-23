@@ -76,7 +76,7 @@ Examples:
     if args.source == 'wordpress':
         if args.timestamp is not None:
             print("WARNING: --timestamp argument is not applicable to wordpress source and will be ignored")
-        if args.max_depth != 2:  # 2 is the default
+        if args.max_depth != 3:  # 3 is the default
             print("WARNING: --max-depth argument is not applicable to wordpress source and will be ignored")
     elif args.source == 'wix':
         if args.timestamp is not None:

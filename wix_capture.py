@@ -278,7 +278,7 @@ class WixCapture:
         except Exception as e:
             print(f"Error processing CSS {css_path}: {e}")
     
-    def capture_page(self, url: str, depth: int = 0, max_depth: int = 2) -> None:
+    def capture_page(self, url: str, depth: int = 0, max_depth: int = 3) -> None:
         """
         Capture a single page and its resources.
         
@@ -339,7 +339,7 @@ class WixCapture:
         except Exception as e:
             print(f"Error capturing page {url}: {e}")
     
-    def capture_site(self, max_depth: int = 2) -> None:
+    def capture_site(self, max_depth: int = 3) -> None:
         """
         Capture entire Wix site.
         
@@ -371,7 +371,7 @@ def main():
     
     url = sys.argv[1]
     output_dir = sys.argv[2] if len(sys.argv) > 2 else "wix_capture"
-    max_depth = int(sys.argv[3]) if len(sys.argv) > 3 else 2
+    max_depth = int(sys.argv[3]) if len(sys.argv) > 3 else 3
     
     with WixCapture(url, output_dir) as capturer:
         capturer.capture_site(max_depth=max_depth)
