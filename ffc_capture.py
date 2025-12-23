@@ -62,8 +62,8 @@ Examples:
     parser.add_argument(
         '-d', '--max-depth',
         type=int,
-        default=2,
-        help='Maximum crawl depth (default: 2) - for wix and wayback sources'
+        default=3,
+        help='Maximum crawl depth (default: 3) - for wix and wayback sources'
     )
     
     args = parser.parse_args()

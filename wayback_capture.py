@@ -178,9 +178,8 @@ class WaybackCapture:
         try:
             target_path.relative_to(base_dir)
         except ValueError:
-            # If the resolved path escapes the output directory, fall back to a safe file name
-            safe_name = os.path.basename(path) or 'index.html'
-            target_path = base_dir / safe_name
+            # If the resolved path escapes the output directory, treat as path traversal
+            raise ValueError(f"Path traversal detected for URL: {url}") from None
         
         return target_path
     

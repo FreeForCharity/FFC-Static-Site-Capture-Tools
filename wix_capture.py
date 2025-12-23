@@ -180,7 +180,7 @@ class WixCapture:
                 return ext
         return None
     
-    def extract_resources_from_html(self, html_content: str, base_url: str):
+    def extract_resources_from_html(self, html_content: str, base_url: str) -> tuple:
         """
         Extract all resource URLs from HTML content.
         

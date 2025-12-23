@@ -4,7 +4,17 @@ Example usage script demonstrating all three capture tools.
 
 This script shows how to use the FFC Static Site Capture Tools
 programmatically in your own Python code.
+
+Before uncommenting and running the examples below, uncomment these imports:
+    # from wayback_capture import WaybackCapture
+    # from wix_capture import WixCapture
+    # from wordpress_capture import WordPressCapture
 """
+
+# Uncomment these imports to run the examples:
+# from wayback_capture import WaybackCapture
+# from wix_capture import WixCapture
+# from wordpress_capture import WordPressCapture
 
 
 def example_wayback_capture():
