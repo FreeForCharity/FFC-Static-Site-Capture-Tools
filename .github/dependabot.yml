@@ -1,0 +1,24 @@
+# Dependabot configuration for automated dependency updates
+# Documentation: https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Keep Python dependencies up to date
+  - package-ecosystem: 'pip'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00' # UTC timezone (all times in dependabot.yml use UTC)
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: 'pip'
+      include: 'scope'
+    labels:
+      - 'dependencies'
+      - 'python'
+    groups:
+      python-dependencies:
+        update-types:
+          - 'minor'
+          - 'patch'
